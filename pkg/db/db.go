@@ -7,7 +7,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var DB *sql.DB
+var db *sql.DB
 
 const schema = `
 CREATE TABLE scheduler (
@@ -30,13 +30,13 @@ func Init(dbFile string) error {
 		install = true
 	}
 
-	DB, err = sql.Open("sqlite", dbFile)
+	db, err = sql.Open("sqlite", dbFile)
 	if err != nil {
 		return err
 	}
 
 	if install {
-		_, err = DB.Exec(schema)
+		_, err = db.Exec(schema)
 		if err != nil {
 			return err
 		}
