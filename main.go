@@ -23,4 +23,3 @@ func main() {
 	// Запуск сервера
 	server.Run()
 }
-}

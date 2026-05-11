@@ -1,29 +1,25 @@
 package server
 
 import (
+	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"todo/pkg/api"
 )
 
 func Run() {
 	port := os.Getenv("TODO_PORT")
-
 	if port == "" {
 		port = "7540"
 	}
 
-	r := gin.Default()
-
 	// Static files
-	r.Static("/css", "./web/css")
-	r.Static("/js", "./web/js")
+	fs := http.FileServer(http.Dir("./web"))
+	http.Handle("/", fs)
 
-	// favicon
-	r.StaticFile("/favicon.ico", "./web/favicon.ico")
+	// API
+	api.Init() // регистрирует обработчики, например /api/nextdate
 
-	// index
-	r.StaticFile("/", "./web/index.html")
-
-	r.Run(":" + port)
+	// Запуск сервера
+	http.ListenAndServe(":"+port, nil)
 }
