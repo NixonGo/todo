@@ -9,5 +9,10 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 	// обработка других методов будет добавлена на следующих шагах
 	case http.MethodPost:
 		addTaskHandler(w, r)
+	case http.MethodGet:
+		getTaskHandler(w, r)
+	case http.MethodPut:
+		editTaskHandler(w, r)
+
 	}
 }

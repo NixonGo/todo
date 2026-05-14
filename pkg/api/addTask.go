@@ -25,6 +25,13 @@ func writeError(w http.ResponseWriter, status int, msg string) {
 func checkDate(task *db.Task) error {
 	layout := "20060102"
 	now := time.Now()
+	now = time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0, 0, 0, 0,
+		now.Location(),
+	)
 
 	if task.Date == "" {
 		task.Date = now.Format(layout)
@@ -34,7 +41,7 @@ func checkDate(task *db.Task) error {
 	if err != nil {
 		return errors.New("error parse date")
 	}
-
+	
 	if now.After(date) && task.Repeat == "" {
 		task.Date = now.Format(layout)
 	}
