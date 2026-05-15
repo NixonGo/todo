@@ -10,17 +10,21 @@ import (
 )
 
 func nextDateHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	nowStr := r.FormValue("now")
 	dstart := r.FormValue("date")
 	repeat := r.FormValue("repeat")
-
-	layout := "20060102"
 
 	var now time.Time
 	if nowStr == "" {
 		now = time.Now()
 	} else {
-		t, err := time.Parse(layout, nowStr)
+		t, err := time.Parse(dateLayout, nowStr)
 		if err != nil {
 			http.Error(w, "bad now parameter", http.StatusBadRequest)
 			return
@@ -38,13 +42,12 @@ func nextDateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
-	layout := "20060102"
 
 	if repeat == "" {
 		return "", errors.New("repeat is empty")
 	}
 
-	dstartTime, err := time.Parse(layout, dstart)
+	dstartTime, err := time.Parse(dateLayout, dstart)
 	if err != nil {
 		return "", err
 	}
@@ -82,5 +85,5 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		return "", errors.New("unsupported repeat rule")
 	}
 
-	return dstartTime.Format(layout), nil
+	return dstartTime.Format(dateLayout), nil
 }

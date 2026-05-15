@@ -1,4 +1,4 @@
-module todo
+module github.com/NixonGo/todo
 
 go 1.26.1
 

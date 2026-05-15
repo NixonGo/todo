@@ -3,7 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"todo/pkg/db"
+
+	"github.com/NixonGo/todo/pkg/db"
 )
 
 func editTaskHandler(w http.ResponseWriter, r *http.Request) {

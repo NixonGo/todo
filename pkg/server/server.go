@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"todo/pkg/api"
+	"github.com/NixonGo/todo/pkg/api"
 )
 
 func Run() {

@@ -6,7 +6,13 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	"todo/pkg/db"
+
+	"github.com/NixonGo/todo/pkg/db"
+)
+
+const (
+	dateLayout = "20060102"
+	taskLimit  = 50
 )
 
 func writeJSON(w http.ResponseWriter, status int, data any) error {
@@ -17,13 +23,15 @@ func writeJSON(w http.ResponseWriter, status int, data any) error {
 }
 
 func writeError(w http.ResponseWriter, status int, msg string) {
-	writeJSON(w, status, map[string]string{
+	err := writeJSON(w, status, map[string]string{
 		"error": msg,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func checkDate(task *db.Task) error {
-	layout := "20060102"
 	now := time.Now()
 	now = time.Date(
 		now.Year(),
@@ -34,16 +42,16 @@ func checkDate(task *db.Task) error {
 	)
 
 	if task.Date == "" {
-		task.Date = now.Format(layout)
+		task.Date = now.Format(dateLayout)
 	}
 
-	date, err := time.Parse(layout, task.Date)
+	date, err := time.Parse(dateLayout, task.Date)
 	if err != nil {
 		return errors.New("error parse date")
 	}
-	
+
 	if now.After(date) && task.Repeat == "" {
-		task.Date = now.Format(layout)
+		task.Date = now.Format(dateLayout)
 	}
 
 	if now.After(date) && task.Repeat != "" {

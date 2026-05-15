@@ -17,7 +17,7 @@ func AddTask(task *Task) (int64, error) {
 	var id int64
 	// определите запрос
 	query := `INSERT INTO scheduler (date,title,comment,repeat) VALUES (:date, :title, :comment, :repeat)`
-	res, err := db.Exec(query,
+	res, err := Db.Exec(query,
 		sql.Named("date", task.Date),
 		sql.Named("title", task.Title),
 		sql.Named("comment", task.Comment),
@@ -33,7 +33,7 @@ func Tasks(limit int) ([]*Task, error) {
 	var tasks []*Task
 
 	query := "SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?"
-	rows, err := db.Query(query, limit)
+	rows, err := Db.Query(query, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -41,17 +41,24 @@ func Tasks(limit int) ([]*Task, error) {
 
 	for rows.Next() {
 		var task Task
-		err := rows.Scan(
+
+		err = rows.Scan(
 			&task.ID,
 			&task.Date,
 			&task.Title,
 			&task.Comment,
 			&task.Repeat,
 		)
+
 		if err != nil {
 			return nil, err
 		}
+
 		tasks = append(tasks, &task)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 	return tasks, nil
 }
@@ -59,7 +66,7 @@ func Tasks(limit int) ([]*Task, error) {
 func GetTask(id string) (*Task, error) {
 	var task Task
 	query := "SELECT id,date,title,comment,repeat FROM scheduler WHERE id = ?"
-	row := db.QueryRow(query, id)
+	row := Db.QueryRow(query, id)
 	err := row.Scan(
 		&task.ID,
 		&task.Date,
@@ -75,7 +82,7 @@ func GetTask(id string) (*Task, error) {
 
 func UpdateTask(task *Task) error {
 	query := "UPDATE scheduler SET date = ?,title = ?,comment = ?,repeat = ? WHERE id = ?"
-	res, err := db.Exec(query,
+	res, err := Db.Exec(query,
 		task.Date,
 		task.Title,
 		task.Comment,
@@ -99,7 +106,7 @@ func UpdateTask(task *Task) error {
 
 func DeleteTask(id string) error {
 	query := "DELETE FROM scheduler WHERE id = ?"
-	res, err := db.Exec(query, id)
+	res, err := Db.Exec(query, id)
 	if err != nil {
 		return errors.New("cannot delete task")
 	}
@@ -115,7 +122,7 @@ func DeleteTask(id string) error {
 
 func UpdateDate(next string, id string) error {
 	query := "UPDATE scheduler SET date = ? WHERE id = ?"
-	res, err := db.Exec(query, next, id)
+	res, err := Db.Exec(query, next, id)
 	if err != nil {
 		return errors.New("cannot update task")
 	}

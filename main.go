@@ -3,8 +3,9 @@ package main
 import (
 	"log"
 	"os"
-	"todo/pkg/db"
-	"todo/pkg/server"
+
+	"github.com/NixonGo/todo/pkg/db"
+	"github.com/NixonGo/todo/pkg/server"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Db.Close()
 
 	// Запуск сервера
 	server.Run()

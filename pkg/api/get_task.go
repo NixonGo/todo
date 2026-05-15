@@ -2,7 +2,8 @@ package api
 
 import (
 	"net/http"
-	"todo/pkg/db"
+
+	"github.com/NixonGo/todo/pkg/db"
 )
 
 func getTaskHandler(w http.ResponseWriter, r *http.Request) {

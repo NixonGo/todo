@@ -3,10 +3,16 @@ package api
 import (
 	"net/http"
 	"time"
-	"todo/pkg/db"
+
+	"github.com/NixonGo/todo/pkg/db"
 )
 
 func doneTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	id := r.FormValue("id")
 	if id == "" {
 		writeError(w, http.StatusBadRequest, "cannot get id")
